@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For RGBLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+RGBLED		KEYWORD1
+RGBColor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+crossfade	KEYWORD2
+setColor	KEYWORD2
+setIntensity	KEYWORD2
+setCrossfadeWait	KEYWORD2
+setCrossfadeHold	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
