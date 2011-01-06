@@ -1,0 +1,7 @@
+*.pyc
+
+# osx noise
+.DS_Store
+
+# other noise
+*.swp
