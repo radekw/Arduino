@@ -1,3 +1,22 @@
+/*
+ * Copyright, 2011 Radek Wierzbicki
+ *  
+ * This file is part of RemLight.
+ *
+ * RemLight is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RemLight is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with RemLight.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <RGBLED.h>
 #include <RGBColor.h>
 #include <LED.h>
@@ -30,25 +49,25 @@ void buzz();
  * followed by a number of necessary parameters. Some commands have an
  * undefined number of parameters. 
  * Color definitions:
- *  Color is defined by three bytes, each representing color intensity
- *  of one color (namely, red, green, and blue). Intensity is specified
- *  by a number between 0 and 100: 0 for the lowest intensity. Let's
- *  call that a color tripplet.
+ *   Color is defined by three bytes, each representing color intensity
+ *   of one color (namely, red, green, and blue). Intensity is specified
+ *   by a number between 0 and 100: 0 for the lowest intensity. Let's
+ *   call that a color tripplet.
  * Folowing commands are defined:
- *  Set color: 
- *    Must get a color tripplet (3 bytes)
- *  Crossfade:
- *    Gets any number of color tripplets. It will crossfade continously
- *    between all given colors.
- *  Set intensity:
- *    Gets a single integer between 0 and 100 representing LED brightness
- *  Set crossfade wait:
- *    Gets a single 8-bit integer representing the wait time in 
- *    miliseconds that controlls the speed of the crossfade. 
- *    0 is the fastest.
- *  Set crossfade hold:
- *    Gets a single 8-bit integer representing the wait time in seconds
- *    before the crossfade to the next color, if any.
+ *   Set color: 
+ *     Must get a color tripplet (3 bytes)
+ *   Crossfade:
+ *     Gets any number of color tripplets. It will crossfade continously
+ *     between all given colors.
+ *   Set intensity:
+ *     Gets a single integer between 0 and 100 representing LED brightness
+ *   Set crossfade wait:
+ *     Gets a single 8-bit integer representing the wait time in 
+ *     miliseconds that controlls the speed of the crossfade. 
+ *     0 is the fastest.
+ *   Set crossfade hold:
+ *     Gets a single 8-bit integer representing the wait time in seconds
+ *     before the crossfade to the next color, if any.
 */
 
 // Here are the protocol constants

@@ -1,54 +1,73 @@
+/*
+ * Copyright, 2011 Radek Wierzbicki
+ *  
+ * This file is part of RGBLED.
+ *
+ * RGBLED is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RGBLED is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with RGBLED.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "WProgram.h"
 #include "RGBLED.h"
 #include "RGBColor.h"
 
 /* 
-* Library by Radek Wierzbicki
-* Based on ColorCrossfader sketch by Clay Shirky <clay.shirky@nyu.edu>
-* http://www.arduino.cc/en/Tutorial/ColorCrossfader
-* 
-* The library works with common anode and common cathode LED's
-* It will use delays from TimeAlarms library if used
-* http://www.arduino.cc/playground/Code/Time
-* 
-* 
-* The program works like this:
-* Imagine a crossfade that moves the red LED from 0-10, 
-*   the green from 0-5, and the blue from 10 to 7, in
-*   ten steps.
-*   We'd want to count the 10 steps and increase or 
-*   decrease color values in evenly stepped increments.
-*   Imagine a + indicates raising a value by 1, and a -
-*   equals lowering it. Our 10 step fade would look like:
-* 
-*   1 2 3 4 5 6 7 8 9 10
-* R + + + + + + + + + +
-* G   +   +   +   +   +
-* B     -     -     -
-* 
-* The red rises from 0 to 10 in ten steps, the green from 
-* 0-5 in 5 steps, and the blue falls from 10 to 7 in three steps.
-* 
-* In the real program, the color percentages are converted to 
-* 0-255 values, and there are 1020 steps (255*4).
-* 
-* To figure out how big a step there should be between one up- or
-* down-tick of one of the LED values, we call _calculateStep(), 
-* which calculates the absolute gap between the start and end values, 
-* and then divides that gap by 1020 to determine the size of the step  
-* between adjustments in the value.
+ * Library by Radek Wierzbicki
+ * Based on ColorCrossfader sketch by Clay Shirky <clay.shirky@nyu.edu>
+ * http://www.arduino.cc/en/Tutorial/ColorCrossfader
+ * 
+ * The library works with common anode and common cathode LED's
+ * It will use delays from TimeAlarms library if used
+ * http://www.arduino.cc/playground/Code/Time
+ * 
+ * 
+ * The program works like this:
+ * Imagine a crossfade that moves the red LED from 0-10, 
+ *   the green from 0-5, and the blue from 10 to 7, in
+ *   ten steps.
+ *   We'd want to count the 10 steps and increase or 
+ *   decrease color values in evenly stepped increments.
+ *   Imagine a + indicates raising a value by 1, and a -
+ *   equals lowering it. Our 10 step fade would look like:
+ * 
+ *   1 2 3 4 5 6 7 8 9 10
+ * R + + + + + + + + + +
+ * G   +   +   +   +   +
+ * B     -     -     -
+ * 
+ * The red rises from 0 to 10 in ten steps, the green from 
+ * 0-5 in 5 steps, and the blue falls from 10 to 7 in three steps.
+ * 
+ * In the real program, the color percentages are converted to 
+ * 0-255 values, and there are 1020 steps (255*4).
+ * 
+ * To figure out how big a step there should be between one up- or
+ * down-tick of one of the LED values, we call _calculateStep(), 
+ * which calculates the absolute gap between the start and end values, 
+ * and then divides that gap by 1020 to determine the size of the step  
+ * between adjustments in the value.
 */
 
 
 
 /*
-* Constructor
-* redPid - analog output pin to drive red color
-* greenPin - analog output pin to drive green color
-* bluePin - analog output pin to drive blue color
-* hold - internal crossfade delay in miliseconds; increase for slower fades
-* wait - hold the color after the fade for X miliseconds
-* commonAnode - set to 1 when using common anode LED, 0 for common cathode
+ * Constructor
+ * redPid - analog output pin to drive red color
+ * greenPin - analog output pin to drive green color
+ * bluePin - analog output pin to drive blue color
+ * hold - internal crossfade delay in miliseconds; increase for slower fades
+ * wait - hold the color after the fade for X miliseconds
+ * commonAnode - set to 1 when using common anode LED, 0 for common cathode
 */
 RGBLED::RGBLED(int redPin, int greenPin, int bluePin, 
                int hold, int wait, int commonAnode) {
@@ -76,9 +95,9 @@ RGBLED::RGBLED(int redPin, int greenPin, int bluePin,
 
 
 /* crossFade() converts the percentage colors to a 
-*  0-255 range, then loops 1020 times, checking to see if  
-*  the value needs to be updated each time, then writing
-*  the color values to the correct pins.
+ *  0-255 range, then loops 1020 times, checking to see if  
+ *  the value needs to be updated each time, then writing
+ *  the color values to the correct pins.
 */
 void RGBLED::crossfade(RGBColor &color) {
   // map color to values from 0 to 255
@@ -122,7 +141,7 @@ void RGBLED::crossfade(RGBColor &color) {
 
 
 /*
-* setColor() sets a color without crossfade
+ * setColor() sets a color without crossfade
 */
 void RGBLED::setColor(RGBColor &color) {
   _redValue = _mapColor(color.getRed());
@@ -141,8 +160,8 @@ void RGBLED::setColor(RGBColor &color) {
 
 
 /*
-* set the intensity of the LED
-* accepts an integer from 0 to 100
+ * set the intensity of the LED
+ * accepts an integer from 0 to 100
 */
 void RGBLED::setIntensity(int intensity) {
     _intensity = (float)constrain(intensity, 0, 100);
@@ -151,7 +170,8 @@ void RGBLED::setIntensity(int intensity) {
 
 
 /*
-* 
+ * set crossfade wait in miliseconds
+ * accepts an integer
 */
 void RGBLED::setCrossfadeWait(int wait) {
     _wait = wait;
@@ -160,7 +180,8 @@ void RGBLED::setCrossfadeWait(int wait) {
 
 
 /*
-* 
+ * set crossfade hold in miliseconds
+ * accepts and integer
 */
 void RGBLED::setCrossfadeHold(int hold) {
     _hold = hold;
@@ -169,7 +190,7 @@ void RGBLED::setCrossfadeHold(int hold) {
 
 
 /*
-* 
+ * 
 */
 int RGBLED::_calculateStep(int prevValue, int endValue) {
   int step = endValue - prevValue; // What's the overall gap?
@@ -182,9 +203,9 @@ int RGBLED::_calculateStep(int prevValue, int endValue) {
 
 
 /* When the loop value, i,
-*  reaches the step size appropriate for one of the
-*  colors, it increases or decreases the value of that color by 1. 
-*  (R, G, and B are each calculated separately.)
+ *  reaches the step size appropriate for one of the
+ *  colors, it increases or decreases the value of that color by 1. 
+ *  (R, G, and B are each calculated separately.)
 */
 int RGBLED::_calculateVal(int step, int val, int i) {
   if ((step) && i % step == 0) { // If step is non-zero and its time to change a value,
@@ -211,8 +232,8 @@ int RGBLED::_calculateVal(int step, int val, int i) {
 
 
 /* _mapColor() maps color described by value from 0 to 100
-* to value from 0 to 255 accepted by analogWrite
-* taking intensity into account
+ * to value from 0 to 255 accepted by analogWrite
+ * taking intensity into account
 */
 int RGBLED::_mapColor(int color) {
   int C;
