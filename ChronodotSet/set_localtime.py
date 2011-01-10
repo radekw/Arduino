@@ -38,7 +38,7 @@ serial.read(1000)
 time.sleep(2)
 
 # get the timestamp and write to serial
-ts = int(time.time()) + (tzoffset * 60 * 60)
+ts = round(time.time()) + (tzoffset * 60 * 60)
 tm = 'T%s' % ts
 serial.write(tm)
 
