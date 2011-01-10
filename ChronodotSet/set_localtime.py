@@ -47,6 +47,6 @@ serial.read(1000)
 print 'Set time to %s' % tm
 
 # keep reading and displaying time
-while(True):
+for i in range(0, 5):
     sys.stdout.write(serial.readline())
 

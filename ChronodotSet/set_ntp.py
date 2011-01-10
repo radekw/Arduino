@@ -20,8 +20,7 @@
 
 # needs http://pypi.python.org/pypi/ntplib/
 
-import serial, sys, ntplib
-from time import ctime
+import serial, sys, ntplib, time
 
 
 # get TZ offset from command line param
@@ -54,6 +53,7 @@ serial.read(1000)
 print 'Set time to %s' % tm
 
 # keep reading and displaying time
-while(True):
+for i in range(0, 5):
     sys.stdout.write(serial.readline())
+    time.sleep(1)
 
