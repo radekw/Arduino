@@ -18,23 +18,25 @@
 */
 
 
-#include <Time.h>
 #include <Wire.h>
-#include <DS1307RTC.h>
+#include <Chronodot.h>
+
+
+Chronodot chronodot = Chronodot();
 
 
 void setup() {
   Serial.begin(9600);
-  Wire.begin();
 }
 
 
 void loop() {
   if(Serial.available()) {
-     time_t t = processSyncMessage();
-     if(t > 0) {
-        RTC.set(t);
-     }
+    timeDateElements tE;
+    processSyncMessage(tE);
+    if (tE.month > 0) {
+      chronodot.setTimeDate(tE);
+    }
   }
   sendTime();
   delay(1000);
@@ -42,52 +44,70 @@ void loop() {
 
 
 void sendTime() {
-  tmElements_t tm;
-  RTC.read(tm);
+  chronodot.readTimeDate();
   
-  Serial.print((int)tm.Year + 1970);
+  Serial.print(chronodot.timeDate.year);
   Serial.print("-");
-  padZero((int)tm.Month);
+  printPadded(chronodot.timeDate.month);
   Serial.print("-");
-  padZero((int)tm.Day);
+  printPadded(chronodot.timeDate.day);
   Serial.print(" ");
-  padZero((int)tm.Hour);
+  printPadded(chronodot.timeDate.hours);
   Serial.print(":");
-  padZero((int)tm.Minute);
+  printPadded(chronodot.timeDate.minutes);
   Serial.print(":");
-  padZero((int)tm.Second);
+  printPadded(chronodot.timeDate.seconds);
   Serial.println("");
 }
 
 
-void padZero(int num) {
+void printPadded(int num) {
   if(num < 10)
     Serial.print('0');
   Serial.print(num);
 }
 
 
-/*  code to process time sync messages from the serial port   */
-#define TIME_MSG_LEN  11   // time sync to PC is HEADER followed by unix time_t as ten ascii digits
-#define TIME_HEADER  'T'   // Header tag for serial time sync message
-
-
-time_t processSyncMessage() {
-  // return the time if a valid sync message is received on the serial port.
-  while (Serial.available() >=  TIME_MSG_LEN) {  // time message consists of a header and ten ascii digits
+void processSyncMessage(timeDateElements &tE) {
+  tE.seconds = 0;
+  tE.minutes = 0;
+  tE.hours   = 0;
+  tE.weekDay = 0;
+  tE.day     = 0;
+  tE.month   = 0;
+  tE.year    = 0;
+  
+  while (Serial.available() >= 15) {
     char c = Serial.read();
-    Serial.print(c);
-    if (c == TIME_HEADER) {
-      time_t pctime = 0;
-      for(int i = 0; i < TIME_MSG_LEN - 1; i++) {
-        c = Serial.read();
-        if (c >= '0' && c <= '9') {
-          pctime = (10 * pctime) + (c - '0') ; // convert digits to a number
-        }
-      }
-      return pctime;
+    if (c == 'T') {
+      int d1000, d100, d10, d01;
+      
+      d1000 = Serial.read() - '0';
+      d100 = Serial.read() - '0';
+      d10 = Serial.read() - '0';
+      d01 = Serial.read() - '0';
+      tE.year = (d1000 * 1000) + (d100 * 100) + (d10 * 10) + d01;
+      
+      d10 = Serial.read() - '0';
+      d01 = Serial.read() - '0';
+      tE.month = (d10 * 10) + d01;
+      
+      d10 = Serial.read() - '0';
+      d01 = Serial.read() - '0';
+      tE.day = (d10 * 10) + d01;
+      
+      d10 = Serial.read() - '0';
+      d01 = Serial.read() - '0';
+      tE.hours = (d10 * 10) + d01;
+      
+      d10 = Serial.read() - '0';
+      d01 = Serial.read() - '0';
+      tE.minutes = (d10 * 10) + d01;
+      
+      d10 = Serial.read() - '0';
+      d01 = Serial.read() - '0';
+      tE.seconds = (d10 * 10) + d01;
     }
   }
-  return 0;
 }
 
