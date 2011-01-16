@@ -30,7 +30,7 @@ typedef struct {
     uint8_t weekDay;
     uint8_t day;
     uint8_t month; 
-    uint8_t year;
+    uint16_t year;
 } timeDateElements;
 
 

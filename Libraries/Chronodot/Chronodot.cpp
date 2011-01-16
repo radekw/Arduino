@@ -57,7 +57,6 @@ void Chronodot::readTimeDate() {
     timeDateBCD.weekDay = Wire.receive();
     timeDateBCD.day     = Wire.receive();
     timeDateBCD.month   = Wire.receive() & 0b01111111; // ignore bit 7
-    timeDateBCD.year    = Wire.receive();
 
     timeDate.seconds = bcd2dec(timeDateBCD.seconds);
     timeDate.minutes = bcd2dec(timeDateBCD.minutes);
@@ -65,7 +64,10 @@ void Chronodot::readTimeDate() {
     timeDate.weekDay = bcd2dec(timeDateBCD.weekDay);
     timeDate.day     = bcd2dec(timeDateBCD.day);
     timeDate.month   = bcd2dec(timeDateBCD.month);
-    timeDate.year    = bcd2dec(timeDateBCD.year);
+
+    // some special handling for the year
+    timeDate.year    = bcd2dec(Wire.receive()) + 1970;
+    timeDateBCD.year = dec2bcd(timeDate.year % 1000);
 }
 
 
@@ -94,12 +96,14 @@ void Chronodot::readDate() {
     timeDateBCD.weekDay = Wire.receive();
     timeDateBCD.day     = Wire.receive();
     timeDateBCD.month   = Wire.receive() & 0b01111111; // ignore bit 7
-    timeDateBCD.year    = Wire.receive();
 
     timeDate.weekDay = bcd2dec(timeDateBCD.weekDay);
     timeDate.day     = bcd2dec(timeDateBCD.day);
     timeDate.month   = bcd2dec(timeDateBCD.month);
-    timeDate.year    = bcd2dec(timeDateBCD.year);
+
+    // some special handling for the year
+    timeDate.year    = bcd2dec(Wire.receive()) + 1970;
+    timeDateBCD.year = dec2bcd(timeDate.year % 1000);
 }
 
 
@@ -163,7 +167,7 @@ void Chronodot::setTimeDate(timeDateElements &tE) {
     Wire.send(dec2bcd(tE.weekDay));
     Wire.send(dec2bcd(tE.day));
     Wire.send(dec2bcd(tE.month));
-    Wire.send(dec2bcd(tE.year));
+    Wire.send(dec2bcd(tE.year - 1970));
     Wire.endTransmission();
 }
 
@@ -184,7 +188,7 @@ void Chronodot::setDate(timeDateElements &tE) {
     Wire.send(dec2bcd(tE.weekDay));
     Wire.send(dec2bcd(tE.day));
     Wire.send(dec2bcd(tE.month));
-    Wire.send(dec2bcd(tE.year));
+    Wire.send(dec2bcd(tE.year - 1970));
     Wire.endTransmission();
 }
 

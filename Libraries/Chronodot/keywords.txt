@@ -6,7 +6,8 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Chronodot	KEYWORD1
+Chronodot		KEYWORD1
+timeDateElements	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
