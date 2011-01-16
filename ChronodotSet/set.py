@@ -49,6 +49,7 @@ elif options.string:
 else:
     print 'Setting time from local time'
     dt = datetime.datetime.now()
+    dt = dt.replace(second=int(round(dt.second + (float(dt.microsecond) / 1000000))), microsecond=0)
     
 tm = 'T%s' % dt.strftime('%Y%m%d%H%M%S')
 serial.write(tm)
