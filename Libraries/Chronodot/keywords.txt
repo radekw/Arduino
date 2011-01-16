@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map For RGBLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Chronodot	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+readTimeDate	KEYWORD2
+readTime	KEYWORD2
+readDate	KEYWORD2
+readTemperature	KEYWORD2
+setSQW		KEYWORD2
+setTimeDate	KEYWORD2
+setTime		KEYWORD2
+setDate		KEYWORD2
+dec2bcd		KEYWORD2
+bcd2dec		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
