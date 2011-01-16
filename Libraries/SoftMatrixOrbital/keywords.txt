@@ -12,7 +12,7 @@ SoftMatrixOrbital	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-void turnAutoScrollOn	KEYWORD2
+turnAutoScrollOn	KEYWORD2
 turnAutoScrollOff	KEYWORD2
 turnAutoLineWrapOn	KEYWORD2
 turnAutoLineWrapOff	KEYWORD2
