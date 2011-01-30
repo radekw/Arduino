@@ -33,6 +33,8 @@ typedef struct {
     uint16_t year;
 } timeDateElements;
 
+uint8_t dec2bcd(uint8_t num);
+uint8_t bcd2dec(uint8_t num);
 
 class Chronodot {
     public:
@@ -52,10 +54,6 @@ class Chronodot {
         float temperature;
         uint8_t temperatureIntBCD;
         uint8_t temperatureFractionBCD;
-
-    private:
-        static uint8_t dec2bcd(uint8_t num);
-        static uint8_t bcd2dec(uint8_t num);
 };
 
 #endif

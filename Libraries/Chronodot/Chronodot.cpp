@@ -22,6 +22,17 @@
 
 #define DS3231_CTRL_ID 0x68 
 
+
+uint8_t dec2bcd(uint8_t num) {
+    return ((num / 10) << 4) + (num % 10);
+}
+
+
+uint8_t bcd2dec(uint8_t num) {
+    return (((num >> 4) & 0b00001111) * 10) + (num & 0b00001111);
+}
+
+
 Chronodot::Chronodot() {
     Wire.begin();
 
@@ -190,15 +201,5 @@ void Chronodot::setDate(timeDateElements &tE) {
     Wire.send(dec2bcd(tE.month));
     Wire.send(dec2bcd(tE.year - 1970));
     Wire.endTransmission();
-}
-
-
-uint8_t Chronodot::dec2bcd(uint8_t num) {
-    return ((num / 10) << 4) + (num % 10);
-}
-
-
-uint8_t Chronodot::bcd2dec(uint8_t num) {
-    return (((num >> 4) & 0b00001111) * 10) + (num & 0b00001111);
 }
 
