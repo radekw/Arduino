@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For RGBLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+CMMR6   KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+handleInterrupt             KEYWORD2
+reset                       KEYWORD2
+readChange                  KEYWORD2
+translateFrameBuffer        KEYWORD2
+getTimeFromFrameBuffer      KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
