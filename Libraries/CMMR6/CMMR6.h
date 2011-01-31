@@ -44,6 +44,8 @@ class CMMR6 {
         int hours;
         int minutes;
         int dayOfYear;
+        int day;
+        int month;
         int year;
         int leapYear;
         int leapSecond;
@@ -51,6 +53,7 @@ class CMMR6 {
         float ut1;
 
         int timeReady;
+        int gotFrame;
 
     private:
         int pulseStartMillis;

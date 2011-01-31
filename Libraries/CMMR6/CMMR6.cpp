@@ -21,6 +21,9 @@
 #include "CMMR6.h"
 
 
+int monthLengths[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+
 CMMR6::CMMR6() {
     reset();
 }
@@ -46,6 +49,8 @@ void CMMR6::reset(void) {
     hours = 0;
     minutes = 0;
     dayOfYear = 0;
+    day = 0;
+    month = 0;
     year = 0;
     leapYear = 0;
     leapSecond = 0;
@@ -53,6 +58,7 @@ void CMMR6::reset(void) {
     ut1 = 0;
 
     timeReady = 0;
+    gotFrame = 0;
 }
 
 
@@ -142,6 +148,8 @@ void CMMR6::readChange(void) {
             if ((frameError == 0) && (positionMarkCount == 2) && (bitCount == 19)) {
                 getTimeFromFrameBuffer();
                 timeReady = 1;
+            } else if ((frameError == 0) && (positionMarkCount == 6) && (bitCount == 59)) {
+                gotFrame = 1;
             }
             
             previousBitIsPositionMark = 1;
@@ -200,6 +208,21 @@ void CMMR6::translateFrameBuffer(void) {
     // 2 - change from DST to ST
     // 3 - daylight saving time
     daylightSavingTime = (2 * frameBuffer[57]) + frameBuffer[58];
+
+    // calculate month and day of the month from day of the year
+    if (leapYear == 1)
+        monthLengths[1] = 29;
+    else
+        monthLengths[1] = 28;
+    int monthStart = 0;
+    for (int m = 0; m < 12; m++) {
+        if ((dayOfYear > monthStart) && (dayOfYear <= (monthStart + monthLengths[m]))) {
+            day = dayOfYear - monthStart;
+            month = m + 1;
+            break;
+        }
+        monthStart += monthLengths[m];
+    }
 
     ut1  = 0.8 * frameBuffer[40];
     ut1 += 0.4 * frameBuffer[41];
