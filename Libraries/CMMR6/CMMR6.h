@@ -20,6 +20,13 @@
 #ifndef CMMR6_h
 #define CMMR6_h
 
+
+extern "C" {
+    // callback function
+    typedef void (*callbackFunction)(void);
+}
+
+
 class CMMR6 {
     public:
         CMMR6();
@@ -30,16 +37,8 @@ class CMMR6 {
         void readChange(void);
         void translateFrameBuffer(void);
         void getTimeFromFrameBuffer(void);
-
-        volatile byte lineState; // current state of the WWVB signal
-        byte previousLineState;  // previous state of the WWVB signal
-
-        int pulseLength;
-        int frameError;
-        int bitValue;
-
-        int frameMark;
-        int positionMarkCount;
+        void attachTimeReadyCallback(callbackFunction fn);
+        void attachFrameReadyCallback(callbackFunction fn);
 
         int hours;
         int minutes;
@@ -52,16 +51,26 @@ class CMMR6 {
         int daylightSavingTime;
         float ut1;
 
-        int timeReady;
-        int gotFrame;
-
     private:
+        callbackFunction timeReadyCallback;
+        callbackFunction frameReadyCallback;
+
+        volatile byte lineState; // current state of the WWVB signal
+        byte previousLineState;  // previous state of the WWVB signal
+
+        int frameError;
+
+        int pulseLength;
+        int bitValue;
+
+        int frameMark;
+        int positionMarkCount;
+
         int pulseStartMillis;
         int previousBitIsPositionMark;
 
         int frameBuffer[60];
         int bitCount;
 };
-
 
 #endif

@@ -26,6 +26,8 @@ int monthLengths[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 CMMR6::CMMR6() {
     reset();
+    timeReadyCallback = NULL;
+    frameReadyCallback = NULL;
 }
 
 
@@ -56,9 +58,6 @@ void CMMR6::reset(void) {
     leapSecond = 0;
     daylightSavingTime = 0;
     ut1 = 0;
-
-    timeReady = 0;
-    gotFrame = 0;
 }
 
 
@@ -68,6 +67,10 @@ void CMMR6::handleInterrupt(int pinValue) {
 
 
 void CMMR6::readChange(void) {
+    if (lineState == previousLineState) {
+        return;
+    }
+
     if (lineState == LOW) {
         pulseStartMillis = millis();
     } else {
@@ -125,12 +128,6 @@ void CMMR6::readChange(void) {
             if (previousBitIsPositionMark == 1) {
                 frameMark = 1;
                 frameError = 0;
-                timeReady = 0;
-                
-                // we had a good frame
-                if ((frameError == 0) && (positionMarkCount == 6) && (bitCount == 59)) {
-                    translateFrameBuffer();
-                }
                 
                 bitCount = 0;
                 positionMarkCount = 0;
@@ -147,10 +144,17 @@ void CMMR6::readChange(void) {
             // should be able to read the time after the second position marker
             if ((frameError == 0) && (positionMarkCount == 2) && (bitCount == 19)) {
                 getTimeFromFrameBuffer();
-                timeReady = 1;
-            } else if ((frameError == 0) && (positionMarkCount == 6) && (bitCount == 59)) {
-                gotFrame = 1;
+                if (timeReadyCallback != NULL)
+                    (*timeReadyCallback)();
             }
+
+            // we had a good frame
+            else if ((frameError == 0) && (positionMarkCount == 6) && (bitCount == 59)) {
+                translateFrameBuffer();
+                if (frameReadyCallback != NULL)
+                    (*frameReadyCallback)();
+            }
+
             
             previousBitIsPositionMark = 1;
             if (frameError == 0)
@@ -198,6 +202,8 @@ void CMMR6::translateFrameBuffer(void) {
     if (year > 99) {
         frameError++;
         year = 0;
+    } else {
+        year += 2000;
     }
 
     leapYear = frameBuffer[55];
@@ -266,5 +272,15 @@ void CMMR6::getTimeFromFrameBuffer(void) {
         frameError++;
         hours = 0;
     }
+}
+
+
+void CMMR6::attachTimeReadyCallback(callbackFunction fn) {
+    timeReadyCallback = fn;
+}
+
+
+void CMMR6::attachFrameReadyCallback(callbackFunction fn) {
+    frameReadyCallback = fn;
 }
 
