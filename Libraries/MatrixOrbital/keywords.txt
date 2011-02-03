@@ -1,0 +1,38 @@
+#######################################
+# Syntax Coloring Map For RGBLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MatrixOrbital	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+turnAutoScrollOn	KEYWORD2
+turnAutoScrollOff	KEYWORD2
+turnAutoLineWrapOn	KEYWORD2
+turnAutoLineWrapOff	KEYWORD2
+turnBlockCursorOn	KEYWORD2
+turnBlockCursorOff	KEYWORD2
+turnUnderlineCursorOn	KEYWORD2
+turnUnderlineCursorOff	KEYWORD2
+clear			KEYWORD2
+newLine			KEYWORD2
+cursorHome		KEYWORD2
+cursorSet		KEYWORD2
+backspace		KEYWORD2
+cursorLeft		KEYWORD2
+cursorRight		KEYWORD2
+setContrast		KEYWORD2
+backlightOn		KEYWORD2
+backlightOff		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+
