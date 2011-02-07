@@ -77,7 +77,7 @@ static const byte CMD_SET_CROSSFADE_HOLD = 32;
  * 1 megabrite
  * hold 0ms, wait 2ms, common anode
  */
-Brites brites = Brites(1, 0, 2);
+Brites brites = Brites(3, 0, 2);
 
 // Define the hardware outputs - some for debugging
 LED greenLed  = LED(6);
