@@ -20,5 +20,6 @@
 from RemLight import RemLight
 
 rl = RemLight('/dev/tty.usbserial-A700eCvT')
+#rl = RemLight('/dev/tty.usbserial-A900frow')
 rl.setColor(100, 100, 100)
 

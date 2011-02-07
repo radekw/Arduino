@@ -20,5 +20,6 @@
 from RemLight import RemLight
 
 rl = RemLight('/dev/tty.usbserial-A700eCvT')
+#rl = RemLight('/dev/tty.usbserial-A900frow')
 rl.crossfade(((100, 0, 0), (0, 100, 0), (0, 0, 100)))
 
