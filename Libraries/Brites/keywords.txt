@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For Brites
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Brites		KEYWORD1
+BriteColor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+crossfade	KEYWORD2
+setColor	KEYWORD2
+setCrossfadeWait	KEYWORD2
+setCrossfadeHold	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
