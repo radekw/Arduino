@@ -10,7 +10,7 @@
  *
  * CMMR6 Library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -39,6 +39,9 @@ class CMMR6 {
         void getTimeFromFrameBuffer(void);
         void attachTimeReadyCallback(callbackFunction fn);
         void attachFrameReadyCallback(callbackFunction fn);
+        void attachPulseCallback(callbackFunction fn);
+
+        int pulseLength;
 
         int hours;
         int minutes;
@@ -54,13 +57,12 @@ class CMMR6 {
     private:
         callbackFunction timeReadyCallback;
         callbackFunction frameReadyCallback;
+        callbackFunction pulseCallback;
 
         volatile byte lineState; // current state of the WWVB signal
         byte previousLineState;  // previous state of the WWVB signal
 
         int frameError;
-
-        int pulseLength;
         int bitValue;
 
         int frameMark;

@@ -28,6 +28,7 @@ CMMR6::CMMR6() {
     reset();
     timeReadyCallback = NULL;
     frameReadyCallback = NULL;
+    pulseCallback = NULL;
 }
 
 
@@ -166,8 +167,10 @@ void CMMR6::readChange(void) {
             frameError++;
             previousBitIsPositionMark = 0;
         }
-        
-        
+
+        if (pulseCallback != NULL)
+            (*pulseCallback)();
+
     }
     previousLineState = lineState;
 }
@@ -282,5 +285,9 @@ void CMMR6::attachTimeReadyCallback(callbackFunction fn) {
 
 void CMMR6::attachFrameReadyCallback(callbackFunction fn) {
     frameReadyCallback = fn;
+}
+
+void CMMR6::attachPulseCallback(callbackFunction fn) {
+    pulseCallback = fn;
 }
 
