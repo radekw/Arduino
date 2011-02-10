@@ -143,6 +143,8 @@ void Chronodot::setSQW(int frequency) {
     Wire.requestFrom(DS3231_CTRL_ID, 1);
     uint8_t register0E = Wire.receive();
   
+
+    // set frequency by changing bits 3 (RS1) and 4 (RS2)
     if (frequency == 1) {
         // clear bits 3 and 4
         register0E &= ~(1 << 3);
@@ -160,6 +162,9 @@ void Chronodot::setSQW(int frequency) {
         register0E |= 1 << 3;
         register0E |= 1 << 4;
     }
+
+    // clear bit 2 (INTCN) to enable SWQ
+    register0E &= ~(1 << 2);
   
     // put the value of the register back
     Wire.beginTransmission(DS3231_CTRL_ID);
