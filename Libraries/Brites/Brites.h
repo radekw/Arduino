@@ -30,10 +30,15 @@
 
 #define MAX_BRITES 10
 #define MAX_COLOR_VALUE 1023
-#define STEPS 1023
+#define STEPS 100
 
+// making brites more linear
 const int colorMap[101] = {
-0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230, 235, 240, 245, 250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330, 335, 340, 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410, 434, 468, 503, 537, 572, 607, 641, 676, 711, 745, 780, 815, 849, 884, 919, 953, 988, 1023
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 
+85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 138, 146, 154, 162, 170, 178, 186, 194, 202, 210, 
+220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 330, 350, 370, 390, 410, 430, 450, 470, 490, 510, 
+530, 550, 570, 590, 610, 630, 650, 670, 690, 710, 740, 770, 800, 830, 860, 890, 920, 950, 980, 1023
 };
 
 class Brites {
@@ -44,6 +49,8 @@ class Brites {
         void setColor(BriteColor &color);
         void setCrossfadeWait(int wait);
         void setCrossfadeHold(int hold);
+        int getCrossfadeWait(void);
+        int getCrossfadeHold(void);
     private:
         int _ledChannels[MAX_BRITES][3];
 
@@ -56,17 +63,16 @@ class Brites {
         int _hold;
         int _wait;
 
-        int _redValue;
-        int _greenValue;
-        int _blueValue;
+        float _redValue;
+        float _greenValue;
+        float _blueValue;
 
-        int _prevRed;
-        int _prevGreen;
-        int _prevBlue;
+        float _prevRed;
+        float _prevGreen;
+        float _prevBlue;
 
-        int _calculateStep(int prevValue, int endValue);
-        int _calculateVal(int step, int val, int i);
-        int _mapColor(int color);
+        float _calculateStep(float prevValue, float endValue);
+        float _calculateVal(float step, float val);
 
         void writeLEDArray(void);
         void sendPacket(void);
