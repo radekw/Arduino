@@ -20,8 +20,9 @@
 import sys
 from RemLight import RemLight
 
-tty = '/dev/tty.usbserial-A700eCvT'
 #tty = '/dev/tty.usbserial-A900frow'
+tty = '/dev/tty.usbserial-A700eCvT'
+dest_addr_long = '\x00\x13\xA2\x00\x40\x5D\xE4\x3C'
 
 if len(sys.argv) < 4:
     print 'need 3 values from 0 to 100 for red, green, and blue'
@@ -35,6 +36,6 @@ except:
     print 'error parsing arguments'
     sys.exit(1)
 
-rl = RemLight(tty)
+rl = RemLight(tty, dest_addr_long)
 rl.crossfade(((red, green, blue),))
 

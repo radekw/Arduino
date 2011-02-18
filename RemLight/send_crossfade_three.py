@@ -19,7 +19,10 @@
 
 from RemLight import RemLight
 
-rl = RemLight('/dev/tty.usbserial-A700eCvT')
-#rl = RemLight('/dev/tty.usbserial-A900frow')
+#tty = '/dev/tty.usbserial-A900frow'
+tty = '/dev/tty.usbserial-A700eCvT'
+dest_addr_long = '\x00\x13\xA2\x00\x40\x5D\xE4\x3C'
+
+rl = RemLight(tty, dest_addr_long)
 rl.crossfade(((100, 0, 0), (0, 100, 0), (0, 0, 100)))
 
