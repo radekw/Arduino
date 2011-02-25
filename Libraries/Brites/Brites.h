@@ -60,8 +60,8 @@ class Brites {
         int _blueCommand;
         
         int _numOfBrites;
-        int _hold;
-        int _wait;
+        unsigned int _hold;
+        unsigned int _wait;
 
         float _redValue;
         float _greenValue;

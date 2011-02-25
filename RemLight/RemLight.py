@@ -45,10 +45,6 @@ class RemLight:
             color = max
         return color
 
-    def setIntensity(self, intensity):
-        cmd = [CMD_SET_INTENSITY, self._constrain(intensity)]
-        self._sendByteArray(cmd)
-
     def setColor(self, red, green, blue):
         cmd = [CMD_SET_COLOR, 
                self._constrain(red), 
@@ -67,13 +63,15 @@ class RemLight:
         cmd = [CMD_CROSSFADE] + data
         self._sendByteArray(cmd)
 
-    def setCrossfadeWait(self, wait):
+    def setCrossfadeWait(self, value):
+        value = self._constrain(value, max=65535)
         cmd = [CMD_SET_CROSSFADE_WAIT, 
-               self._constrain(wait, max=255)]
+               value / 255, value % 255]
         self._sendByteArray(cmd)
 
-    def setCrossfadeHold(self, hold):
+    def setCrossfadeHold(self, value):
+        value = self._constrain(value, max=65535)
         cmd = [CMD_SET_CROSSFADE_HOLD, 
-               self._constrain(hold, max=255)]
+               value / 255, value % 255]
         self._sendByteArray(cmd)
 
