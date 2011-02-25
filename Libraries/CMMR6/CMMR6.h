@@ -42,6 +42,12 @@ class CMMR6 {
         void attachPulseCallback(callbackFunction fn);
 
         int pulseLength;
+        
+        int frameError;
+        int bitValue;
+
+        int frameMark;
+        int positionMarkCount;
 
         int hours;
         int minutes;
@@ -61,12 +67,6 @@ class CMMR6 {
 
         volatile byte lineState; // current state of the WWVB signal
         byte previousLineState;  // previous state of the WWVB signal
-
-        int frameError;
-        int bitValue;
-
-        int frameMark;
-        int positionMarkCount;
 
         int pulseStartMillis;
         int previousBitIsPositionMark;
