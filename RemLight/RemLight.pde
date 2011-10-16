@@ -49,7 +49,7 @@ unsigned long lastEEPROMSave = 0;
 
 #if USE_STATUS_LED == 1
 #include <LED.h>
-LED statusLed = LED(7);
+LED statusLed = LED(13);
 #endif
 
 
@@ -60,6 +60,9 @@ LED statusLed = LED(7);
 // rx: 3; tx: 2
 SoftMatrixOrbital lcd = SoftMatrixOrbital(3, 2, 2, 20);
 #endif
+
+// Analog pin number for IR proximity sensor
+#define PIN_PROXIMITY 3
 
 
 /*
@@ -102,6 +105,7 @@ static const byte CMD_SET_CROSSFADE_HOLD = 32;
  * hold 0ms, wait 2ms, common anode
  */
 Brites brites = Brites(3, 500, 25);
+BriteColor black = BriteColor(0, 0, 0);
 
 
 /* 
@@ -121,6 +125,11 @@ int numberOfColors = 0;
 int currentColorIndex = 0;
 int colorCmd = 0;
 
+/*
+ * Lamp on/off
+ */
+int lightOn = 1;
+
 
 
 // setup function
@@ -134,7 +143,7 @@ void setup() {
   brites.setColor(black);
 
   #if USE_STATUS_LED == 1
-  blinkLed(20, 10);
+  blinkLed(10, 100);
   #endif
 
   #if DEBUG == 1
@@ -165,9 +174,9 @@ void loop() {
 
       #if USE_STATUS_LED == 1
       if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) {
-        blinkLed(10, 10); // status
+        blinkLed(10, 100); // status
       } else {
-        blinkLed(2, 20); // error
+        blinkLed(2, 100); // error
       }
       #endif
 
@@ -197,7 +206,7 @@ void loop() {
           colors = (BriteColor*)malloc(1 * sizeof(BriteColor));
           colors[0] = BriteColor(data[dataIndex++], data[dataIndex++], data[dataIndex++]);
           #if USE_STATUS_LED == 1
-          blinkLed(1, 50);
+          blinkLed(1, 100);
           #endif
           #if DEBUG == 1
           lcd.print("set color ");
@@ -242,7 +251,7 @@ void loop() {
             #endif
           }
           #if USE_STATUS_LED == 1
-          blinkLed(1, 50);
+          blinkLed(1, 100);
           #endif
           #if USE_EEEPROM == 1
           needEEPROMSave = true;
@@ -255,7 +264,7 @@ void loop() {
           unsigned int v = (vH * 255) + vL;
           brites.setCrossfadeWait(v);
           #if USE_STATUS_LED == 1
-          blinkLed(1, 50);
+          blinkLed(1, 100);
           #endif
           #if DEBUG == 1
           lcd.print("set crossfade wait");
@@ -273,7 +282,7 @@ void loop() {
           unsigned int v = (vH * 255) + vL;
           brites.setCrossfadeHold(v);
           #if USE_STATUS_LED == 1
-          blinkLed(1, 50);
+          blinkLed(1, 100);
           #endif
           #if DEBUG == 1
           lcd.print("set crossfade hold");
@@ -288,7 +297,7 @@ void loop() {
         } else {
           cmd = 0;
           #if USE_STATUS_LED == 1
-          blinkLed(2, 20); // error
+          blinkLed(2, 100); // error
           #endif
           #if DEBUG == 1
           lcd.print("error");
@@ -305,36 +314,65 @@ void loop() {
 
       #if USE_STATUS_LED == 1
       if (msr.getStatus() == ASSOCIATED) {
-        blinkLed(5, 10); // status
+        blinkLed(5, 100); // status
       } else if (msr.getStatus() == DISASSOCIATED) {
-        blinkLed(2, 20); // error
+        blinkLed(2, 100); // error
       } else {
-        blinkLed(5, 10); // status
+        blinkLed(5, 100); // status
       }
       #endif
 
     } else {
       #if USE_STATUS_LED == 1
-      blinkLed(2, 20); // error
+      blinkLed(2, 100); // error
       #endif
     }
   }
-
-
-  // do the colors according to the set command
-  // and collors array
-  if (colorCmd == CMD_SET_COLOR) {
-    if (colors != NULL) {
-      brites.setColor(colors[currentColorIndex]);
+  
+  // read proximity sensor
+  int proximity = analogRead(PIN_PROXIMITY);
+  if (proximity > 100) {
+    
+    int ptime = 0;
+    while (proximity > 100) {
+      delay(100);
+      ptime += 100;
+      if (ptime > 30000)
+        break;
+      proximity = analogRead(PIN_PROXIMITY);
     }
-  } else if (colorCmd == CMD_CROSSFADE) {
-    if (colors != NULL) {
-      brites.crossfade(colors[currentColorIndex]);
-    }
-    if (currentColorIndex < numberOfColors - 1) {
-      currentColorIndex++;
-    } else {
+    
+    if (ptime >= 200 && ptime < 30000) {
+      #if USE_STATUS_LED == 1
+      blinkLed(2, 250);
+      #endif
+      if (lightOn == 0) {
+        lightOn = 1;
+      } else {
+        lightOn = 0;
+      }
       currentColorIndex = 0;
+    }
+  }
+  
+  if (lightOn == 0) {
+    brites.setColor(black);
+  } else {
+    // do the colors according to the set command
+    // and collors array
+    if (colorCmd == CMD_SET_COLOR) {
+      if (colors != NULL) {
+        brites.setColor(colors[currentColorIndex]);
+      }
+    } else if (colorCmd == CMD_CROSSFADE) {
+      if (colors != NULL) {
+        brites.crossfade(colors[currentColorIndex]);
+      }
+      if (currentColorIndex < numberOfColors - 1) {
+        currentColorIndex++;
+      } else {
+        currentColorIndex = 0;
+      }
     }
   }
   
