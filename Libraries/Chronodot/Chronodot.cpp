@@ -58,16 +58,16 @@ Chronodot::Chronodot() {
 
 void Chronodot::readTimeDate() {
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x00);
+    Wire.write((uint8_t)0x00);
     Wire.endTransmission();
 
     Wire.requestFrom(DS3231_CTRL_ID, 7);
-    timeDateBCD.seconds = Wire.receive() & 0b01111111; // ignore bit 7
-    timeDateBCD.minutes = Wire.receive();
-    timeDateBCD.hours   = Wire.receive() & 0b00111111; // ignore bit 6 and 7
-    timeDateBCD.weekDay = Wire.receive();
-    timeDateBCD.day     = Wire.receive();
-    timeDateBCD.month   = Wire.receive() & 0b01111111; // ignore bit 7
+    timeDateBCD.seconds = Wire.read() & 0b01111111; // ignore bit 7
+    timeDateBCD.minutes = Wire.read();
+    timeDateBCD.hours   = Wire.read() & 0b00111111; // ignore bit 6 and 7
+    timeDateBCD.weekDay = Wire.read();
+    timeDateBCD.day     = Wire.read();
+    timeDateBCD.month   = Wire.read() & 0b01111111; // ignore bit 7
 
     timeDate.seconds = bcd2dec(timeDateBCD.seconds);
     timeDate.minutes = bcd2dec(timeDateBCD.minutes);
@@ -77,20 +77,20 @@ void Chronodot::readTimeDate() {
     timeDate.month   = bcd2dec(timeDateBCD.month);
 
     // some special handling for the year
-    timeDate.year    = bcd2dec(Wire.receive()) + 1970;
+    timeDate.year    = bcd2dec(Wire.read()) + 1970;
     timeDateBCD.year = dec2bcd(timeDate.year % 1000);
 }
 
 
 void Chronodot::readTime() {
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x00);
+    Wire.write((uint8_t)0x00);
     Wire.endTransmission();
 
     Wire.requestFrom(DS3231_CTRL_ID, 3);
-    timeDateBCD.seconds = Wire.receive() & 0b01111111; // ignore bit 7
-    timeDateBCD.minutes = Wire.receive();
-    timeDateBCD.hours   = Wire.receive() & 0b00111111; // ignore bit 6 and 7
+    timeDateBCD.seconds = Wire.read() & 0b01111111; // ignore bit 7
+    timeDateBCD.minutes = Wire.read();
+    timeDateBCD.hours   = Wire.read() & 0b00111111; // ignore bit 6 and 7
 
     timeDate.seconds = bcd2dec(timeDateBCD.seconds);
     timeDate.minutes = bcd2dec(timeDateBCD.minutes);
@@ -100,20 +100,20 @@ void Chronodot::readTime() {
 
 void Chronodot::readDate() {
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x03);
+    Wire.write((uint8_t)0x03);
     Wire.endTransmission();
 
     Wire.requestFrom(DS3231_CTRL_ID, 4);
-    timeDateBCD.weekDay = Wire.receive();
-    timeDateBCD.day     = Wire.receive();
-    timeDateBCD.month   = Wire.receive() & 0b01111111; // ignore bit 7
+    timeDateBCD.weekDay = Wire.read();
+    timeDateBCD.day     = Wire.read();
+    timeDateBCD.month   = Wire.read() & 0b01111111; // ignore bit 7
 
     timeDate.weekDay = bcd2dec(timeDateBCD.weekDay);
     timeDate.day     = bcd2dec(timeDateBCD.day);
     timeDate.month   = bcd2dec(timeDateBCD.month);
 
     // some special handling for the year
-    timeDate.year    = bcd2dec(Wire.receive()) + 1970;
+    timeDate.year    = bcd2dec(Wire.read()) + 1970;
     timeDateBCD.year = dec2bcd(timeDate.year % 1000);
 }
 
@@ -121,12 +121,12 @@ void Chronodot::readDate() {
 void Chronodot::readTemperature() {
     //temp registers (11h-12h) get updated automatically every 64s
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x11);
+    Wire.write((uint8_t)0x11);
     Wire.endTransmission();
     Wire.requestFrom(DS3231_CTRL_ID, 2);
 
-    uint8_t tempInt = Wire.receive() & 0b01111111; // ignore bit 7
-    uint8_t tempFraction = (Wire.receive() >> 6) * 25; // only bit 7 and 8
+    uint8_t tempInt = Wire.read() & 0b01111111; // ignore bit 7
+    uint8_t tempFraction = (Wire.read() >> 6) * 25; // only bit 7 and 8
 
     temperature = tempInt + (tempFraction / 100);
 
@@ -138,10 +138,10 @@ void Chronodot::readTemperature() {
 void Chronodot::setSQW(int frequency) {
     // Frequency is stored in register 0x0e in bit 3 and 4
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x0e);
+    Wire.write((uint8_t)0x0e);
     Wire.endTransmission();
     Wire.requestFrom(DS3231_CTRL_ID, 1);
-    uint8_t register0E = Wire.receive();
+    uint8_t register0E = Wire.read();
   
 
     // set frequency by changing bits 3 (RS1) and 4 (RS2)
@@ -168,43 +168,43 @@ void Chronodot::setSQW(int frequency) {
   
     // put the value of the register back
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x0e);
-    Wire.send(register0E);
+    Wire.write((uint8_t)0x0e);
+    Wire.write(register0E);
     Wire.endTransmission();
 }
 
 
 void Chronodot::setTimeDate(timeDateElements &tE) {
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x00);
-    Wire.send(dec2bcd(tE.seconds));
-    Wire.send(dec2bcd(tE.minutes));
-    Wire.send(dec2bcd(tE.hours));
-    Wire.send(dec2bcd(tE.weekDay));
-    Wire.send(dec2bcd(tE.day));
-    Wire.send(dec2bcd(tE.month));
-    Wire.send(dec2bcd(tE.year - 1970));
+    Wire.write((uint8_t)0x00);
+    Wire.write(dec2bcd(tE.seconds));
+    Wire.write(dec2bcd(tE.minutes));
+    Wire.write(dec2bcd(tE.hours));
+    Wire.write(dec2bcd(tE.weekDay));
+    Wire.write(dec2bcd(tE.day));
+    Wire.write(dec2bcd(tE.month));
+    Wire.write(dec2bcd(tE.year - 1970));
     Wire.endTransmission();
 }
 
 
 void Chronodot::setTime(timeDateElements &tE) {
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x00);
-    Wire.send(dec2bcd(tE.seconds));
-    Wire.send(dec2bcd(tE.minutes));
-    Wire.send(dec2bcd(tE.hours));
+    Wire.write((uint8_t)0x00);
+    Wire.write(dec2bcd(tE.seconds));
+    Wire.write(dec2bcd(tE.minutes));
+    Wire.write(dec2bcd(tE.hours));
     Wire.endTransmission();
 }
 
 
 void Chronodot::setDate(timeDateElements &tE) {
     Wire.beginTransmission(DS3231_CTRL_ID);
-    Wire.send(0x03);
-    Wire.send(dec2bcd(tE.weekDay));
-    Wire.send(dec2bcd(tE.day));
-    Wire.send(dec2bcd(tE.month));
-    Wire.send(dec2bcd(tE.year - 1970));
+    Wire.write((uint8_t)0x03);
+    Wire.write(dec2bcd(tE.weekDay));
+    Wire.write(dec2bcd(tE.day));
+    Wire.write(dec2bcd(tE.month));
+    Wire.write(dec2bcd(tE.year - 1970));
     Wire.endTransmission();
 }
 
