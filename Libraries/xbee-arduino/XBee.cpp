@@ -26,6 +26,7 @@
 #endif
 
 #include "HardwareSerial.h"
+#include "SoftwareSerial.h"
 
 XBeeResponse::XBeeResponse() {
 
@@ -787,6 +788,10 @@ void XBee::begin(long baud) {
 
 void XBee::setSerial(HardwareSerial &serial) {
 	_serial = &serial;
+}
+
+void XBee::setSerial(SoftwareSerial &serial) {
+	_serial = (HardwareSerial*) &serial;
 }
 
 bool XBee::available() {

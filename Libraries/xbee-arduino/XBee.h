@@ -28,6 +28,9 @@
 
 #include <inttypes.h>
 
+#include "HardwareSerial.h"
+#include "SoftwareSerial.h"
+
 #define SERIES_1
 #define SERIES_2
 
@@ -721,6 +724,7 @@ public:
 	 * Specify the serial port.  Only relevant for Arduinos that support multiple serial ports (e.g. Mega)
 	 */
 	void setSerial(HardwareSerial &serial);
+	void setSerial(SoftwareSerial &serial);
 private:
 	bool available();
 	uint8_t read();
