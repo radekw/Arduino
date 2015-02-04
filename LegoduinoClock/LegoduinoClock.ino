@@ -91,9 +91,10 @@ void loop() {
     }
     
     displayTime();
-    //displayBinaryTime();
     disp.syncDisplays();
     displayNow = false;
+    
+    blinkLed(1, 50);
   }
 
   readXBee();
@@ -123,40 +124,6 @@ void displayDate() {
 
 
 /* ************************************************** */
-void displayTemperature() {
-  chronodot.readTemperature();
-  sprintf(displayString, "%02.2f C", chronodot.temperature);
-  drawString(1, 0, displayString);
-}
-
-
-/* ************************************************** */
-void displayBinaryTime() {
-  int x = 56;
-  int y = 4;
-  uint8_t firstSec = firstBCDdigit(chronodot.timeDateBCD.seconds);
-  uint8_t secSec = secondBCDdigit(chronodot.timeDateBCD.seconds);
-  uint8_t firstMin = firstBCDdigit(chronodot.timeDateBCD.minutes);
-  uint8_t secMin = secondBCDdigit(chronodot.timeDateBCD.minutes);
-  uint8_t firstHour = firstBCDdigit(chronodot.timeDateBCD.hours);
-  uint8_t secHour = secondBCDdigit(chronodot.timeDateBCD.hours);
-
-}
-
-
-/* ************************************************** */
-uint8_t firstBCDdigit(uint8_t num) {
-  return num >> 4;
-}
-
-
-/* ************************************************** */
-uint8_t secondBCDdigit(uint8_t num) {
-  return num & 0b00001111;
-}
-
-
-/* ************************************************** */
 void readXBee(void) {
   
   xbee.readPacket(10);
@@ -166,23 +133,22 @@ void readXBee(void) {
     if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
       xbee.getResponse().getZBRxResponse(rx);
       
-      blinkLed(1, 10);
       uint8_t dataSize = rx.getDataLength();
       uint8_t* data = rx.getData();
       
       // read the command and decide what to do
       // "get..."
       if ((dataSize >= 3) && ((char)data[0] == 'g') && ((char)data[1] == 'e') && ((char)data[2] == 't')) {
-//        if ((rx.getRemoteAddress64().getMsb() == coordinatorAddress64Msb) && 
-//            (rx.getRemoteAddress64().getLsb() == coordinatorAddress64Lsb)) {
-//            remoteAddress64.setMsb(0x00000000);
-//            remoteAddress64.setLsb(0x00000000);
-//          } else {
-//            remoteAddress64.setMsb(rx.getRemoteAddress64().getMsb());
-//            remoteAddress64.setLsb(rx.getRemoteAddress64().getLsb());
-//          }
-          remoteAddress64.setMsb(rx.getRemoteAddress64().getMsb());
-          remoteAddress64.setLsb(rx.getRemoteAddress64().getLsb());
+        if ((rx.getRemoteAddress64().getMsb() == coordinatorAddress64Msb) && 
+            (rx.getRemoteAddress64().getLsb() == coordinatorAddress64Lsb)) {
+            remoteAddress64.setMsb(0x00000000);
+            remoteAddress64.setLsb(0x00000000);
+          } else {
+            remoteAddress64.setMsb(rx.getRemoteAddress64().getMsb());
+            remoteAddress64.setLsb(rx.getRemoteAddress64().getLsb());
+          }
+//          remoteAddress64.setMsb(rx.getRemoteAddress64().getMsb());
+//          remoteAddress64.setLsb(rx.getRemoteAddress64().getLsb());
           // "get now"
           if ((dataSize == 7) && ((char)data[4] == 'n') && ((char)data[5] == 'o') && ((char)data[6] == 'w')) {
             sendCurrentTime();
@@ -206,7 +172,7 @@ void readAndSetTime(uint8_t dataSize, uint8_t* data) {
     inputString[i] = data[i];
   inputString[19] = '\0';
   int yr = 0, mo = 0, dy = 0, h = 0, m = 0, s = 0;
-  int r = sscanf(inputString, "%*s T %4d %2d %2d %2d %2d %2d", &yr, &mo, &dy, &h, &m, &s);
+  int r = sscanf(inputString, "set T%4d%2d%2d%2d%2d%2d", &yr, &mo, &dy, &h, &m, &s);
   if ((r > 0) && (mo > 0) && (dy > 0)) {
     timeDateElements tE;
     tE.seconds = s;
@@ -218,6 +184,7 @@ void readAndSetTime(uint8_t dataSize, uint8_t* data) {
     tE.year    = yr;
     chronodot.setTimeDate(tE);
   }
+  blinkLed(3, 100);
 }
 
 
@@ -229,6 +196,7 @@ void sendCurrentTime() {
     chronodot.timeDate.hours, chronodot.timeDate.minutes, chronodot.timeDate.seconds);
   ZBTxRequest zbTx = ZBTxRequest(remoteAddress64, (uint8_t*)displayString, 15);
   xbee.send(zbTx);
+  blinkLed(3, 100);
 }
 
 
@@ -236,8 +204,9 @@ void sendCurrentTime() {
 void blinkLed(int times, int wait) {
   for (int i = 0; i < times; i++) {
     statusLed.on();
-    delay(wait);
+    delay(wait/2);
     statusLed.off();
+    delay(wait/2);
     if (i + 1 < times) {
       delay(wait);
     }

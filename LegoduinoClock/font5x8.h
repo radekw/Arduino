@@ -3,7 +3,7 @@
 void draw5x8Char(uint8_t x, uint8_t y, char c);
 void draw5x8String(uint8_t x, uint8_t y, char* c);
 
-unsigned char PROGMEM myfont[128][5] = {
+const unsigned char PROGMEM myfont[128][5] = {
   {0x00, 0x00, 0x00, 0x00, 0x00}, // (0) 
   {0x00, 0x00, 0x00, 0x00, 0x00},
   {0x00, 0x00, 0x00, 0x00, 0x00},
