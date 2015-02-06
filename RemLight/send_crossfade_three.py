@@ -24,5 +24,6 @@ tty = '/dev/tty.usbserial-A700eCvT'
 dest_addr_long = '\x00\x13\xA2\x00\x40\x61\x1A\xC9'
 
 rl = RemLight(tty, dest_addr_long)
+rl.setCrossfadeWait(100)
 rl.crossfade(((100, 0, 0), (0, 100, 0), (0, 0, 100)))
 

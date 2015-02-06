@@ -20,7 +20,7 @@
 #ifndef Brites_h
 #define Brites_h
 
-#include "WProgram.h"
+#include "Arduino.h"
 #include "BriteColor.h"
 
 #define CLOCK_PIN 13  // CI

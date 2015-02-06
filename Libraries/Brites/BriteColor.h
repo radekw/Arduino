@@ -20,7 +20,7 @@
 #ifndef BriteColor_h
 #define BriteColor_h
 
-#include "WProgram.h"
+#include "Arduino.h"
 
 #define MAX_COLOR 100
 

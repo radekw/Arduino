@@ -19,6 +19,7 @@
 
 #include <Brites.h>
 #include <BriteColor.h>
+#include <SoftwareSerial.h>
 #include <XBee.h>
 
 // this is a hack to make pre-processor work
@@ -35,11 +36,6 @@ void blinkLed();
 // this turns status/error LED
 #define USE_STATUS_LED 0
 
-// this turns the LCD debugging on
-// set to 0 to disable
-#define DEBUG 0
-
-
 #if USE_EEEPROM == 1
 #include <EEPROM.h>
 boolean needEEPROMSave = false;
@@ -52,14 +48,6 @@ unsigned long lastEEPROMSave = 0;
 LED statusLed = LED(13);
 #endif
 
-
-#if DEBUG == 1
-// LCD for debugging
-#include <AFSoftSerial.h>
-#include <SoftMatrixOrbital.h>
-// rx: 3; tx: 2
-SoftMatrixOrbital lcd = SoftMatrixOrbital(3, 2, 2, 20);
-#endif
 
 // Analog pin number for IR proximity sensor
 #define PIN_PROXIMITY 3
@@ -145,15 +133,6 @@ void setup() {
   #if USE_STATUS_LED == 1
   blinkLed(10, 100);
   #endif
-
-  #if DEBUG == 1
-  // setup LCD for debugging
-  lcd.turnBlockCursorOff();
-  lcd.turnUnderlineCursorOff();
-  lcd.clear();
-  lcd.backlightOn(0);
-  lcd.cursorHome();
-  #endif
   
   // read saved data from EEPROM
   #if USE_EEEPROM == 1
@@ -180,12 +159,6 @@ void loop() {
       }
       #endif
 
-      #if DEBUG == 1
-      lcd.clear();
-      lcd.cursorHome();
-      #endif
-      
-      
       // analyze the payload and decide what to do
       uint8_t dataSize = rx.getDataLength();
       uint8_t* data = rx.getData();
@@ -208,16 +181,6 @@ void loop() {
           #if USE_STATUS_LED == 1
           blinkLed(1, 100);
           #endif
-          #if DEBUG == 1
-          lcd.print("set color ");
-          lcd.newLine();
-          lcd.print(colors[0].getRed());
-          lcd.print(" ");
-          lcd.print(colors[0].getGreen());
-          lcd.print(" ");
-          lcd.print(colors[0].getBlue());
-          lcd.print(" ");
-          #endif
           #if USE_EEEPROM == 1
           needEEPROMSave = true;
           #endif
@@ -235,20 +198,8 @@ void loop() {
           currentColorIndex = 0;
           numberOfColors = (dataSize - 1) / 3;
           colors = (BriteColor*)malloc(numberOfColors * sizeof(BriteColor));
-          #if DEBUG == 1
-          lcd.print("set crossfade");
-          lcd.newLine();
-          #endif
           for (int n = 0; n < numberOfColors; n++) {
             colors[n] = BriteColor(data[dataIndex++], data[dataIndex++], data[dataIndex++]);
-            #if DEBUG == 1
-            lcd.print(colors[n].getRed());
-            lcd.print(" ");
-            lcd.print(colors[n].getGreen());
-            lcd.print(" ");
-            lcd.print(colors[n].getBlue());
-            lcd.print(" ");
-            #endif
           }
           #if USE_STATUS_LED == 1
           blinkLed(1, 100);
@@ -266,11 +217,6 @@ void loop() {
           #if USE_STATUS_LED == 1
           blinkLed(1, 100);
           #endif
-          #if DEBUG == 1
-          lcd.print("set crossfade wait");
-          lcd.newLine();
-          lcd.print(v);
-          #endif
           #if USE_EEEPROM == 1
           needEEPROMSave = true;
           #endif
@@ -284,11 +230,6 @@ void loop() {
           #if USE_STATUS_LED == 1
           blinkLed(1, 100);
           #endif
-          #if DEBUG == 1
-          lcd.print("set crossfade hold");
-          lcd.newLine();
-          lcd.print(v);
-          #endif
           #if USE_EEEPROM == 1
           needEEPROMSave = true;
           #endif
@@ -298,10 +239,6 @@ void loop() {
           cmd = 0;
           #if USE_STATUS_LED == 1
           blinkLed(2, 100); // error
-          #endif
-          #if DEBUG == 1
-          lcd.print("error");
-          lcd.newLine();
           #endif
           #if USE_EEEPROM == 1
           needEEPROMSave = true;
@@ -390,14 +327,6 @@ void loop() {
 void saveToEEPROM(void) {
   // dont' save if command change in less than 15 seconds
   if ((millis() - lastEEPROMSave) < 15000) {
-    #if DEBUG == 1
-    lcd.clear();
-    lcd.cursorHome();
-    lcd.println("delay save to EEPROM");
-    lcd.print(millis());
-    lcd.print(" ");
-    lcd.print(lastEEPROMSave);
-    #endif
     return;
   }
   
@@ -412,16 +341,6 @@ void saveToEEPROM(void) {
   }
   EEPROM.write(a++, brites.getCrossfadeWait());
   EEPROM.write(a++, brites.getCrossfadeHold());
-  
-  #if DEBUG == 1
-  lcd.clear();
-  lcd.cursorHome();
-  lcd.println("saved to EEPROM");
-  lcd.print(millis());
-  lcd.print(" ");
-  lcd.print(" ");
-  lcd.print(lastEEPROMSave);
-  #endif
   
   lastEEPROMSave = millis();
   needEEPROMSave = false;
@@ -446,12 +365,6 @@ void readFromEEPROM(void) {
     }
     brites.setCrossfadeWait(EEPROM.read(a++));
     brites.setCrossfadeHold(EEPROM.read(a++));
-    
-    #if DEBUG == 1
-    lcd.clear();
-    lcd.cursorHome();
-    lcd.print("read from EEPROM");
-    #endif
 }
 #endif
 

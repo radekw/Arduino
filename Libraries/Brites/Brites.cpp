@@ -17,7 +17,7 @@
  * along with Brites.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "WProgram.h"
+#include "Arduino.h"
 #include "Brites.h"
 
 /*
